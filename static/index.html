@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina | Customer Support AI Copilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff2d75'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+  <!-- Ambient Pink Glow Elements -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+  <div class="glow-orb orb-4"></div>
+
+  <!-- Main Container -->
+  <div class="app-layout">
+    <!-- Top Header Glass Bar -->
+    <header class="glass-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="url(#pink-grad)" fill="url(#pink-grad)" fill-opacity="0.25"/>
+            <defs>
+              <linearGradient id="pink-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff2d75"/>
+                <stop offset="100%" stop-color="#ff80bf"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Lumina <span class="copilot-tag">AI Copilot</span></h1>
+          <p class="brand-sub">Enterprise Helpdesk Intelligence & RAG Triage</p>
+        </div>
+      </div>
+
+      <!-- Engine Status Badges -->
+      <div class="header-engine-status">
+        <div class="status-pill" id="groq-pill" title="Groq API Status">
+          <span class="status-dot"></span>
+          <span class="status-icon">⚡</span>
+          <span class="status-label" id="groq-label">Groq: llama-3.3-70b</span>
+        </div>
+        <div class="status-pill" id="nvidia-pill" title="NVIDIA NIM Embeddings Status">
+          <span class="status-dot"></span>
+          <span class="status-icon">💎</span>
+          <span class="status-label" id="nvidia-label">NVIDIA NIM: Active</span>
+        </div>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="btn btn-glass" id="btn-triage-all" title="Batch triage all open tickets">
+          <span class="btn-icon">⚡</span>
+          <span>Auto-Triage All</span>
+        </button>
+        <button class="btn btn-glass" id="btn-open-kb">
+          <span class="btn-icon">📚</span>
+          <span>Knowledge Base</span>
+        </button>
+        <button class="btn btn-glass" id="btn-open-analytics">
+          <span class="btn-icon">📊</span>
+          <span>ROI & Metrics</span>
+        </button>
+        <button class="btn btn-primary" id="btn-new-ticket">
+          <span class="btn-icon">➕</span>
+          <span>New Ticket</span>
+        </button>
+        <button class="btn btn-icon-only" id="btn-open-settings" title="Settings & API Keys">
+          ⚙️
+        </button>
+      </div>
+    </header>
+
+    <!-- Workspace Grid -->
+    <main class="workspace-grid">
+      <!-- COLUMN 1: TICKET QUEUE -->
+      <section class="glass-column col-queue">
+        <div class="column-header">
+          <div class="queue-title-row">
+            <h2>Inbox Queue</h2>
+            <span class="badge badge-pink" id="ticket-count-badge">12 Tickets</span>
+          </div>
+          <!-- Search Box -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="queue-search" placeholder="Search ticket, customer, issue...">
+          </div>
+          <!-- Category / Priority Filter Pills -->
+          <div class="filter-scroller">
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="urgent">Urgent</button>
+            <button class="filter-pill" data-filter="technical">Technical</button>
+            <button class="filter-pill" data-filter="billing">Billing</button>
+            <button class="filter-pill" data-filter="security">Security</button>
+          </div>
+        </div>
+
+        <!-- Ticket Card List -->
+        <div class="ticket-list" id="ticket-list-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading support tickets...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: ACTIVE TICKET & AI TRIAGE INSPECTOR -->
+      <section class="glass-column col-ticket">
+        <div class="active-ticket-wrapper" id="active-ticket-container">
+          <!-- Populated by JS -->
+          <div class="empty-state">
+            <div class="empty-icon">📨</div>
+            <h3>Select a ticket from the inbox</h3>
+            <p>Select any ticket on the left to inspect customer details, AI classification, sentiment score, summary, and RAG resolution.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 3: RAG COPILOT & RESPONSE DRAFT -->
+      <section class="glass-column col-copilot">
+        <div class="column-header">
+          <div class="copilot-title-row">
+            <div class="title-with-badge">
+              <h2>AI Support Copilot</h2>
+              <span class="badge badge-pulse">RAG Grounded</span>
+            </div>
+            <span class="copilot-sparkle">✨</span>
+          </div>
+          <p class="column-sub">Verified answers citing knowledge base policies & technical docs</p>
+        </div>
+
+        <div class="copilot-content-scroll" id="copilot-container">
+          <!-- Grounding Sources Card -->
+          <div class="glass-card copilot-sources-card">
+            <div class="card-title-row">
+              <span class="card-icon">📚</span>
+              <h3>Retrieved Grounding Sources</h3>
+            </div>
+            <div class="sources-list" id="sources-list-container">
+              <div class="source-placeholder">Select a ticket to retrieve relevant KB articles.</div>
+            </div>
+          </div>
+
+          <!-- AI Draft Reply Card -->
+          <div class="glass-card copilot-draft-card">
+            <div class="card-title-row">
+              <span class="card-icon">✍️</span>
+              <h3>AI Suggested Draft</h3>
+              <div class="confidence-tag" id="draft-confidence-badge">94% Grounded</div>
+            </div>
+
+            <!-- Tone Selector Pills -->
+            <div class="tone-selector">
+              <span class="tone-label">Tone:</span>
+              <button class="tone-pill active" data-tone="Empathetic & Professional">Empathetic</button>
+              <button class="tone-pill" data-tone="Technical & Direct">Technical</button>
+              <button class="tone-pill" data-tone="Concise & Brief">Concise</button>
+              <button class="tone-pill" data-tone="Executive">Executive</button>
+            </div>
+
+            <div class="draft-textarea-wrapper">
+              <textarea id="ai-draft-textarea" placeholder="AI draft will be generated automatically upon selecting or triaging a ticket..."></textarea>
+            </div>
+
+            <div class="draft-action-bar">
+              <button class="btn btn-glass-sm" id="btn-copy-draft" title="Copy response to clipboard">
+                📋 Copy
+              </button>
+              <button class="btn btn-glass-sm" id="btn-regen-draft" title="Regenerate with selected tone">
+                🔄 Regenerate
+              </button>
+              <button class="btn btn-primary-sm" id="btn-send-draft" title="Mark ticket as resolved and send">
+                ✉️ Send & Resolve
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick KB Query Tool -->
+          <div class="glass-card copilot-quick-search-card">
+            <div class="card-title-row">
+              <span class="card-icon">🔍</span>
+              <h3>Live Knowledge Base Search</h3>
+            </div>
+            <div class="kb-quick-search-box">
+              <input type="text" id="kb-quick-query" placeholder="Ask KB: e.g. What is refund policy?">
+              <button class="btn btn-glass-sm" id="btn-run-kb-search">Search</button>
+            </div>
+            <div id="kb-quick-results" class="kb-quick-results"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: NEW TICKET CREATOR -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-new-ticket">
+    <div class="glass-modal modal-md">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-icon">➕</span>
+          <h3>Create New Customer Ticket</h3>
+        </div>
+        <button class="modal-close-btn" data-close="modal-new-ticket">&times;</button>
+      </div>
+      <form id="form-new-ticket" class="modal-body">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Customer Name</label>
+            <input type="text" id="nt-name" required placeholder="e.g. Sarah Jenkins">
+          </div>
+          <div class="form-group flex-1">
+            <label>Customer Email</label>
+            <input type="email" id="nt-email" required placeholder="sarah@enterprise.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Company / Organization</label>
+            <input type="text" id="nt-company" placeholder="FinTech Global" value="Acme Cloud">
+          </div>
+          <div class="form-group flex-1">
+            <label>Customer Tier</label>
+            <select id="nt-tier">
+              <option value="Enterprise">Enterprise (High SLA)</option>
+              <option value="Pro" selected>Pro</option>
+              <option value="Standard">Standard</option>
+              <option value="Free">Free</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Reported Priority</label>
+            <select id="nt-priority">
+              <option value="Urgent">Urgent</option>
+              <option value="High" selected>High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ticket Subject</label>
+          <input type="text" id="nt-subject" required placeholder="e.g. Critical 502 Bad Gateway during database migration">
+        </div>
+        <div class="form-group">
+          <label>Ticket Description / Message Body</label>
+          <textarea id="nt-body" rows="4" required placeholder="Describe the exact error, symptoms, customer impact, or questions..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-glass" data-close="modal-new-ticket">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create & Auto-Triage Ticket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: ANALYTICS & WORKFLOW ROI DASHBOARD -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-analytics">
+    <div class="glass-modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-icon">📊</span>
+          <div>
+            <h3>Support Workflow ROI & Measurable Improvements</h3>
+            <p class="modal-sub">Real-time business impact metrics proving automated classification and RAG deflection</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-close="modal-analytics">&times;</button>
+      </div>
+      <div class="modal-body" id="analytics-modal-body">
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Est. Hours Saved</span>
+              <span class="kpi-icon">⏱️</span>
+            </div>
+            <div class="kpi-val" id="kpi-hours-saved">6.0 hrs</div>
+            <div class="kpi-footer">Based on 30m saved per ticket (12m triage + 18m RAG)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Tier 1 Deflection Rate</span>
+              <span class="kpi-icon">🛡️</span>
+            </div>
+            <div class="kpi-val text-green" id="kpi-deflection-rate">72.5%</div>
+            <div class="kpi-footer">Resolved with AI RAG without engineering escalation</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Avg. First Response Time</span>
+              <span class="kpi-icon">⚡</span>
+            </div>
+            <div class="kpi-val text-pink" id="kpi-response-time">1.8 min</div>
+            <div class="kpi-footer">Down from 4.2 hours manual industry baseline (99.3% faster)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Escalation Rate</span>
+              <span class="kpi-icon">⚠️</span>
+            </div>
+            <div class="kpi-val" id="kpi-escalation-rate">25.0%</div>
+            <div class="kpi-footer">Strictly filtered to legitimate tier-2 issues</div>
+          </div>
+        </div>
+
+        <!-- Distributions Breakdown -->
+        <div class="distribution-grid">
+          <div class="glass-card dist-card">
+            <h4>Tickets by Category</h4>
+            <div class="dist-bars" id="dist-categories"></div>
+          </div>
+          <div class="glass-card dist-card">
+            <h4>Customer Sentiment Breakdown</h4>
+            <div class="dist-bars" id="dist-sentiments"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: KNOWLEDGE BASE EXPLORER -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-kb">
+    <div class="glass-modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-icon">📚</span>
+          <div>
+            <h3>Knowledge Base & Vector Store</h3>
+            <p class="modal-sub">Articles indexed with NVIDIA NIM Embeddings for RAG retrieval</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-close="modal-kb">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="kb-top-bar">
+          <input type="text" id="kb-modal-search" class="kb-search-input" placeholder="Search knowledge articles by keyword or concept...">
+          <button class="btn btn-primary-sm" id="btn-show-add-article">+ Add Article</button>
+        </div>
+
+        <!-- Add Article Collapsible Form -->
+        <div class="glass-card add-article-form hidden" id="add-article-container">
+          <h4>Ingest New Knowledge Article</h4>
+          <form id="form-add-article">
+            <div class="form-row">
+              <div class="form-group flex-2">
+                <label>Article Title</label>
+                <input type="text" id="new-art-title" required placeholder="e.g. Webhook Timeout & Exponential Backoff Policy">
+              </div>
+              <div class="form-group flex-1">
+                <label>Category</label>
+                <input type="text" id="new-art-category" required placeholder="Technical & Integrations">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Article Content & Troubleshooting Instructions</label>
+              <textarea id="new-art-content" rows="4" required placeholder="Write detailed policy, commands, diagnostic steps..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Tags (comma separated)</label>
+              <input type="text" id="new-art-tags" placeholder="webhooks, latency, timeout, stripe">
+            </div>
+            <div class="form-actions-right">
+              <button type="button" class="btn btn-glass-sm" id="btn-cancel-add-article">Cancel</button>
+              <button type="submit" class="btn btn-primary-sm">Ingest & Embed Article</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Article List -->
+        <div class="kb-articles-grid" id="kb-articles-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 4: SETTINGS & API KEYS -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="glass-modal modal-md">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-icon">⚙️</span>
+          <div>
+            <h3>API Keys & Engine Settings</h3>
+            <p class="modal-sub">Connect LangChain Groq API and NVIDIA NIM Embeddings</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-close="modal-settings">&times;</button>
+      </div>
+      <form id="form-settings" class="modal-body">
+        <div class="settings-banner">
+          <p>⚡ <strong>Zero Friction Demo:</strong> If keys are omitted, the copilot runs high-speed resilient simulation. Enter your live keys below to unlock real-time Groq Llama 3.3 70B inference and NVIDIA NIM vector embeddings!</p>
+        </div>
+
+        <!-- Groq Configuration -->
+        <div class="form-group">
+          <label>Groq API Key <span class="label-link"><a href="https://console.groq.com/keys" target="_blank">Get Free Key &rarr;</a></span></label>
+          <input type="password" id="cfg-groq-key" placeholder="gsk_..." autocomplete="off">
+          <span class="help-text">Powers ticket classification, structured summary, sentiment, and RAG drafting.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Groq LLM Model</label>
+          <select id="cfg-groq-model">
+            <option value="llama-3.3-70b-versatile" selected>llama-3.3-70b-versatile (Recommended)</option>
+            <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Ultra Fast)</option>
+            <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+          </select>
+        </div>
+
+        <!-- NVIDIA NIM Configuration -->
+        <div class="form-group">
+          <label>NVIDIA NIM API Key <span class="label-link"><a href="https://build.nvidia.com" target="_blank">Get Key &rarr;</a></span></label>
+          <input type="password" id="cfg-nvidia-key" placeholder="nvapi-..." autocomplete="off">
+          <span class="help-text">Powers high-dimensional vector embeddings for Knowledge Base RAG matching.</span>
+        </div>
+
+        <div class="form-group">
+          <label>NVIDIA Embedding Model</label>
+          <select id="cfg-nvidia-model">
+            <option value="nvidia/nv-embedqa-e5-v5" selected>nvidia/nv-embedqa-e5-v5 (Recommended)</option>
+            <option value="nvidia/llama-3.2-nv-embedqa-1b-v2">nvidia/llama-3.2-nv-embedqa-1b-v2</option>
+            <option value="baai/bge-m3">baai/bge-m3</option>
+          </select>
+        </div>
+
+        <!-- Connection Test Results Box -->
+        <div class="test-result-box hidden" id="test-connection-result"></div>
+
+        <div class="modal-footer space-between">
+          <button type="button" class="btn btn-glass" id="btn-test-connection">
+            <span class="btn-icon">🔌</span>
+            <span>Test Connections</span>
+          </button>
+          <div>
+            <button type="button" class="btn btn-glass" data-close="modal-settings">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
