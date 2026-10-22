@@ -361,10 +361,11 @@ body {
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: 340px 1fr 410px;
+  grid-template-columns: 360px 1fr 420px;
   gap: 16px;
-  flex: 1;
-  min-height: 0; /* Important for inner scroll */
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
 }
 
 /* Glass Columns */
@@ -378,6 +379,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
+  height: 100%;
 }
 
 .column-header {
@@ -449,11 +452,13 @@ body {
   display: flex;
   gap: 6px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 2px 2px 6px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .filter-scroller::-webkit-scrollbar {
-  height: 3px;
+  display: none;
 }
 
 .filter-pill {
@@ -466,6 +471,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
@@ -483,37 +489,45 @@ body {
 
 /* Ticket List Container */
 .ticket-list {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* Ticket Card */
 .ticket-card {
-  padding: 14px;
+  flex-shrink: 0;
+  min-height: 104px;
+  padding: 14px 16px;
   background: var(--bg-glass-card);
-  border: 1px solid rgba(255, 105, 180, 0.15);
+  border: 1px solid rgba(255, 105, 180, 0.16);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
 }
 
 .ticket-card:hover {
   background: var(--bg-glass-hover);
-  border-color: rgba(255, 105, 180, 0.35);
+  border-color: rgba(255, 105, 180, 0.38);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 45, 117, 0.15);
+  box-shadow: 0 6px 20px rgba(255, 45, 117, 0.2);
 }
 
 .ticket-card.active {
-  background: rgba(45, 14, 45, 0.85);
+  background: rgba(45, 14, 45, 0.88);
   border-color: var(--pink-neon);
-  box-shadow: 0 0 20px rgba(255, 45, 117, 0.3), inset 0 0 0 1px var(--pink-neon);
+  box-shadow: 0 0 20px rgba(255, 45, 117, 0.35), inset 0 0 0 1px var(--pink-neon);
 }
 
 .ticket-card::before {
@@ -521,14 +535,16 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 3px;
+  width: 4px;
   height: 100%;
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
   background: transparent;
   transition: background 0.2s ease;
 }
 
-.ticket-card.priority-urgent::before { background: var(--color-urgent); }
-.ticket-card.priority-high::before { background: var(--color-high); }
+.ticket-card.priority-urgent::before { background: var(--color-urgent); box-shadow: 0 0 8px var(--color-urgent); }
+.ticket-card.priority-high::before { background: var(--color-high); box-shadow: 0 0 8px var(--color-high); }
 .ticket-card.priority-medium::before { background: var(--color-medium); }
 .ticket-card.priority-low::before { background: var(--color-low); }
 
@@ -536,32 +552,39 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 0;
 }
 
 .ticket-id {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.74rem;
+  font-weight: 700;
   color: var(--pink-rose);
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
 }
 
 .ticket-badges {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .ticket-subject {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: #fff;
-  line-height: 1.35;
-  margin-bottom: 8px;
+  line-height: 1.4;
+  margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .card-footer-meta {
@@ -570,21 +593,36 @@ body {
   justify-content: space-between;
   font-size: 0.72rem;
   color: var(--text-muted);
+  gap: 8px;
+  margin-top: 2px;
 }
 
 .customer-info {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-info span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sla-badge {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--pink-blush);
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(255, 105, 180, 0.1);
+  background: rgba(255, 105, 180, 0.12);
+  border: 1px solid rgba(255, 105, 180, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
@@ -592,12 +630,18 @@ body {
    ========================================================================== */
 
 .active-ticket-wrapper {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 18px 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.active-ticket-wrapper > * {
+  flex-shrink: 0;
 }
 
 /* Customer Banner Card */
@@ -945,12 +989,18 @@ body {
 }
 
 .copilot-content-scroll {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.copilot-content-scroll > * {
+  flex-shrink: 0;
 }
 
 /* Sources List */
@@ -1619,4 +1669,70 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--pink-neon);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN SYSTEM
+   ========================================================================== */
+
+@media (max-width: 1366px) {
+  .workspace-grid {
+    grid-template-columns: 330px 1fr 370px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .workspace-grid {
+    grid-template-columns: 320px 1fr;
+    height: auto;
+  }
+  .col-copilot {
+    grid-column: 1 / -1;
+    max-height: 550px;
+  }
+  .col-queue {
+    max-height: 650px;
+  }
+  .col-ticket {
+    max-height: 650px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    padding: 10px;
+    height: auto;
+  }
+  .glass-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    padding: 16px;
+  }
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .workspace-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .col-queue, .col-ticket, .col-copilot {
+    max-height: 520px;
+  }
+  .triage-grid {
+    grid-template-columns: 1fr;
+  }
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .distribution-grid {
+    grid-template-columns: 1fr;
+  }
 }
